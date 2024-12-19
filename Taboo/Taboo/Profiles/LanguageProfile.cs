@@ -11,6 +11,8 @@ public class LanguageProfile : Profile
         CreateMap<LanguageCreateDto, Language>()
             .ForMember(l => l.Icon, d => d.MapFrom(t => t.IconUrl));
         CreateMap<Language, LanguageGetDto>();
+        CreateMap<LanguageUpdateDto, Language>();
+
 
     }
 }

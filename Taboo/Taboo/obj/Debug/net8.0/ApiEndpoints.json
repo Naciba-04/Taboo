@@ -50,7 +50,7 @@
       },
       {
         "Name": "dto",
-        "Type": "Taboo.DTOs.Languages.LanguageCreateDto",
+        "Type": "Taboo.DTOs.Languages.LanguageUpdateDto",
         "IsRequired": true
       }
     ],
