@@ -12,8 +12,8 @@ using Taboo.DAL;
 namespace Taboo.Migrations
 {
     [DbContext(typeof(TabooDbContext))]
-    [Migration("20241219223346_CreateWordAndBannedWordAndGameTables")]
-    partial class CreateWordAndBannedWordAndGameTables
+    [Migration("20241222190414_GameWordBannedWordLnaguageTables")]
+    partial class GameWordBannedWordLnaguageTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,11 +49,9 @@ namespace Taboo.Migrations
 
             modelBuilder.Entity("Taboo.Entities.Game", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("BannedWordCount")
                         .HasColumnType("int");

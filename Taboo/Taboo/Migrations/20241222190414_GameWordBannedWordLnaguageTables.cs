@@ -6,17 +6,29 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Taboo.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateWordAndBannedWordAndGameTables : Migration
+    public partial class GameWordBannedWordLnaguageTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    Code = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.Code);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BannedWordCount = table.Column<int>(type: "int", nullable: false),
                     FailCount = table.Column<int>(type: "int", nullable: false),
                     SkipCount = table.Column<int>(type: "int", nullable: false),
@@ -78,12 +90,6 @@ namespace Taboo.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Languages_Name",
-                table: "Languages",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BannedWords_WordId",
                 table: "BannedWords",
                 column: "WordId");
@@ -92,6 +98,12 @@ namespace Taboo.Migrations
                 name: "IX_Games_LanguageCode",
                 table: "Games",
                 column: "LanguageCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Languages_Name",
+                table: "Languages",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Words_LanguageCode",
@@ -111,9 +123,8 @@ namespace Taboo.Migrations
             migrationBuilder.DropTable(
                 name: "Words");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Languages_Name",
-                table: "Languages");
+            migrationBuilder.DropTable(
+                name: "Languages");
         }
     }
 }

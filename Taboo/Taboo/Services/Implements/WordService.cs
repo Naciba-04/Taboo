@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using Taboo.DAL;
 using Taboo.DTOs.Languages;
 using Taboo.DTOs.Words;
@@ -12,39 +13,54 @@ namespace Taboo.Services.Implements;
 
 public class WordService(TabooDbContext _context,IMapper _mapper) : IWordService
 {
-    public async Task CreateAsync(WordCreateDto dto)
+    public async Task<int> CreateAsync(WordCreateDto dto)
     {
        
-            if (await _context.Words.AnyAsync(w => w.Language == dto.Language && w.Text==dto.Text))
+            if (await _context.Words.AnyAsync(w => w.LanguageCode == dto.Language && w.Text==dto.Text))
                 throw new WordExistException();
-            var lang = _mapper.Map<Word>(dto);
-            await _context.Words.AddAsync(lang);
-            await _context.SaveChangesAsync();
-        
+        if (dto.BannedWords.Count() != 6)
+            throw new InvalidBannedWordCountExcpetion();
+        Word word = new Word
+        {
+            LanguageCode = dto.Language,
+            Text = dto.Text,
+            BannedWords = dto.BannedWords.Select(x => new BannedWord
+            {
+                Text = x
+            }).ToList()
+        };
+
+        await _context.Words.AddAsync(word);
+        await _context.SaveChangesAsync();
+        return word.Id;
     }
 
-    public Task DeleteAsync(string text)
+    public async Task<IEnumerable<WordGetDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var words = await _context.Words.ToListAsync();
+
+        return _mapper.Map<IEnumerable<WordGetDto>>(words);
     }
 
-    public Task<IEnumerable<WordGetDto>> GetAllAsync()
+    async Task<Word?> _getById(int id)
+        => await _context.Words.FindAsync(id);
+
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var data = await _getById(id);
+        if (data == null) throw new WordNotFoundException();
+
+        _context.Words.Remove(data);
+
+        await _context.SaveChangesAsync();
     }
 
-    public Task<WordGetDto> GetByCodeAsync(string text)
+    
+    public async Task UpdateAsync(int id, WordUpdateDto dto)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<WordGetDto> ReadAsync(string text)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(string text, WordUpdateDto dto)
-    {
-        throw new NotImplementedException();
+        var data = await _getById(id);
+        if (data == null) throw new WordNotFoundException();
+        _mapper.Map(dto, data);
+        await _context.SaveChangesAsync();
     }
 }
