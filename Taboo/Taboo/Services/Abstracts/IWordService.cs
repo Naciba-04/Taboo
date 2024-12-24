@@ -9,5 +9,7 @@ public interface IWordService
     Task<int>CreateAsync(WordCreateDto dto);
     Task UpdateAsync(int id, WordUpdateDto dto);
     Task DeleteAsync(int id);
-    
+    Task<WordGetDto> GetByIdAsync(int id);
+    Task<WordGetDto> ReadAsync(int id);
+
 }

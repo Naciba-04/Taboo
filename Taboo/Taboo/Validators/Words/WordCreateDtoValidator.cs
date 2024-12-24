@@ -15,8 +15,8 @@ namespace Taboo.Validators.Words
 
             RuleFor(x => x.BannedWords)
                 .NotNull()
-                .Must(x => x.Count() == (int)GameLevel.Hard)
-                .WithMessage("You must write" + (int)GameLevel.Hard + "unique forbidden words");
+                .Must(x => x.Count() == (int)GameLevels.Hard)
+                .WithMessage("You must write" + (int)GameLevels.Hard + "unique forbidden words");
 
             RuleForEach(x => x.BannedWords)
                 .NotNull()

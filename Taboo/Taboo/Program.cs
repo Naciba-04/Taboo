@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Taboo.DAL;
+using Taboo.Enums;
 
 namespace Taboo
 {
@@ -17,6 +18,7 @@ namespace Taboo
             builder.Services.AddControllers();
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+            builder.Services.AddCacheService(builder.Configuration, CacheTypes.Redis);
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddServices();
             builder.Services.AddDbContext<TabooDbContext>(opt =>
@@ -36,6 +38,8 @@ namespace Taboo
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseTabuExceptionHandler();
 
             app.UseHttpsRedirection();
 

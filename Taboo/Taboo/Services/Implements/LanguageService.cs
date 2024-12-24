@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Taboo.DAL;
 using Taboo.DTOs.Languages;
@@ -25,6 +26,9 @@ public class LanguageService(TabooDbContext _context, IMapper _mapper) : ILangua
         return _mapper.Map<IEnumerable<LanguageGetDto>>(langs);
 
     }
+
+    async Task<Language?> _getByCode(string code)
+        => await _context.Languages.FindAsync(code);
     public async Task UpdateAsync(string code, LanguageUpdateDto dto)
     {
         var data = await _getByCode(code);
@@ -33,8 +37,6 @@ public class LanguageService(TabooDbContext _context, IMapper _mapper) : ILangua
         await _context.SaveChangesAsync();
 
     }
-    async Task<Language?> _getByCode(string code)
-        => await _context.Languages.FindAsync(code);
     public async Task DeleteAsync(string code)
     {
         var data = await _getByCode(code);
@@ -45,17 +47,17 @@ public class LanguageService(TabooDbContext _context, IMapper _mapper) : ILangua
         await _context.SaveChangesAsync();
     }
 
-
-
-    public Task<LanguageGetDto> GetByCodeAsync(string code)
+    public async Task<LanguageGetDto> GetByCodeAsync(string code)
     {
-        throw new NotImplementedException();
+        var data = await _getByCode(code);
+        if (data == null) throw new LanguageNotFoundException();
+        return  _mapper.Map<LanguageGetDto>(data);
     }
 
-    public Task<LanguageGetDto> ReadAsync(string code)
+    public async Task<LanguageGetDto> ReadAsync(string code)
     {
-        throw new NotImplementedException();
+        var data = await _getByCode(code);
+        if (data == null) throw new LanguageNotFoundException();
+        return _mapper.Map<LanguageGetDto>(data);
     }
-
-
 }
